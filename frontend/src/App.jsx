@@ -1,122 +1,143 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { DonationProvider } from './context/DonationContext';
+import { AppLayout } from './components/layout/AppLayout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+
+// Public Pages
+import { HomePage } from './pages/public/HomePage';
+
+// Auth Pages
+import { LoginPage } from './pages/auth/LoginPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
+
+// Restaurant Pages
+import { RestaurantDashboard } from './pages/restaurant/RestaurantDashboard';
+import { DonateFoodPage } from './pages/restaurant/DonateFoodPage';
+import { MyDonationsPage } from './pages/restaurant/MyDonationsPage';
+import { RestaurantProfilePage } from './pages/restaurant/RestaurantProfilePage';
+
+// Shelter / NGO Pages
+import { ShelterDashboard } from './pages/shelter/ShelterDashboard';
+import { BrowseFoodPage } from './pages/shelter/BrowseFoodPage';
+import { MyRequestsPage } from './pages/shelter/MyRequestsPage';
+import { ShelterProfilePage } from './pages/shelter/ShelterProfilePage';
+
+// Shared Authenticated Pages
+import { NotificationsPage } from './pages/shared/NotificationsPage';
+import { SettingsPage } from './pages/shared/SettingsPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <AuthProvider>
+      <DonationProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AppLayout />}>
+              {/* 1. Public Route */}
+              <Route path="/" element={<HomePage />} />
 
-      <div className="ticks"></div>
+              {/* 2-4. Authentication Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+              {/* 5-8. Restaurant Dashboard & Flows */}
+              <Route
+                path="/restaurant/dashboard"
+                element={
+                  <ProtectedRoute allowedRole="restaurant">
+                    <RestaurantDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/restaurant/donate"
+                element={
+                  <ProtectedRoute allowedRole="restaurant">
+                    <DonateFoodPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/restaurant/donations"
+                element={
+                  <ProtectedRoute allowedRole="restaurant">
+                    <MyDonationsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/restaurant/profile"
+                element={
+                  <ProtectedRoute allowedRole="restaurant">
+                    <RestaurantProfilePage />
+                  </ProtectedRoute>
+                }
+              />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+              {/* 9-12. Shelter / NGO Dashboard & Flows */}
+              <Route
+                path="/shelter/dashboard"
+                element={
+                  <ProtectedRoute allowedRole="shelter">
+                    <ShelterDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shelter/browse"
+                element={
+                  <ProtectedRoute allowedRole="shelter">
+                    <BrowseFoodPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shelter/requests"
+                element={
+                  <ProtectedRoute allowedRole="shelter">
+                    <MyRequestsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shelter/profile"
+                element={
+                  <ProtectedRoute allowedRole="shelter">
+                    <ShelterProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* 13-14. Shared Authenticated Routes */}
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <NotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </DonationProvider>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
