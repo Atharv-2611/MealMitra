@@ -64,37 +64,31 @@ export const Navbar = () => {
               <>
                 <Link
                   to="/"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
+                  className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     isActive('/')
                       ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                      : 'text-[#273951] hover:text-[#533afd] hover:bg-[#f6f9fc]'
                   }`}
                 >
                   Home
                 </Link>
                 <a
+                  href="/#feed"
+                  className="px-3.5 py-1.5 rounded-full text-sm font-medium text-[#273951] hover:text-[#533afd] hover:bg-[#f6f9fc] transition-colors"
+                >
+                  Surplus Feed
+                </a>
+                <a
                   href="/#about"
-                  className="px-3 py-1.5 rounded-full text-sm font-normal text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors"
+                  className="px-3.5 py-1.5 rounded-full text-sm font-medium text-[#273951] hover:text-[#533afd] hover:bg-[#f6f9fc] transition-colors"
                 >
                   About
                 </a>
                 <a
                   href="/#how-it-works"
-                  className="px-3 py-1.5 rounded-full text-sm font-normal text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors"
+                  className="px-3.5 py-1.5 rounded-full text-sm font-medium text-[#273951] hover:text-[#533afd] hover:bg-[#f6f9fc] transition-colors"
                 >
                   How It Works
-                </a>
-                <a
-                  href="/#impact"
-                  className="px-3 py-1.5 rounded-full text-sm font-normal text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors"
-                >
-                  Impact
-                </a>
-                <a
-                  href="/#contact"
-                  className="px-3 py-1.5 rounded-full text-sm font-normal text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors"
-                >
-                  Contact
                 </a>
               </>
             ) : role === 'restaurant' ? (
@@ -303,38 +297,32 @@ export const Navbar = () => {
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm text-[#0d253d] hover:bg-[#f6f9fc]"
+                className="block px-3 py-2 rounded-md text-sm font-medium text-[#0d253d] hover:bg-[#f6f9fc] hover:text-[#533afd] transition-colors"
               >
                 Home
               </Link>
               <a
+                href="/#feed"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-md text-sm font-medium text-[#273951] hover:bg-[#f6f9fc] hover:text-[#533afd] transition-colors"
+              >
+                Surplus Feed
+              </a>
+              <a
                 href="/#about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm text-[#0d253d] hover:bg-[#f6f9fc]"
+                className="block px-3 py-2 rounded-md text-sm font-medium text-[#273951] hover:bg-[#f6f9fc] hover:text-[#533afd] transition-colors"
               >
                 About
               </a>
               <a
                 href="/#how-it-works"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm text-[#0d253d] hover:bg-[#f6f9fc]"
+                className="block px-3 py-2 rounded-md text-sm font-medium text-[#273951] hover:bg-[#f6f9fc] hover:text-[#533afd] transition-colors"
               >
                 How It Works
               </a>
-              <a
-                href="/#impact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm text-[#0d253d] hover:bg-[#f6f9fc]"
-              >
-                Impact
-              </a>
-              <a
-                href="/#contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-sm text-[#0d253d] hover:bg-[#f6f9fc]"
-              >
-                Contact
-              </a>
+
               <div className="pt-4 space-y-2 border-t border-[#e3e8ee]">
                 <Link
                   to="/login"

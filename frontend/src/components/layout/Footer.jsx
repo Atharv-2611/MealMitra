@@ -38,18 +38,18 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="/#how-it-works" className="hover:text-[#533afd] transition-colors">
-                  How It Works
-                </a>
-              </li>
-              <li>
-                <a href="/#impact" className="hover:text-[#533afd] transition-colors">
-                  Live Impact
+                <a href="/#feed" className="hover:text-[#533afd] transition-colors">
+                  Surplus Feed
                 </a>
               </li>
               <li>
                 <a href="/#about" className="hover:text-[#533afd] transition-colors">
                   About Our Mission
+                </a>
+              </li>
+              <li>
+                <a href="/#how-it-works" className="hover:text-[#533afd] transition-colors">
+                  How It Works
                 </a>
               </li>
             </ul>
