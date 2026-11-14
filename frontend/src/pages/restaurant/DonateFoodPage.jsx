@@ -3,15 +3,42 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useDonations } from '../../context/DonationContext';
 import { Button } from '../../components/common/Button';
+import { LocationPickerMap } from '../../components/common/LocationPickerMap';
+import { publishDonation } from '../../services/api';
 import {
   ArrowLeft,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle,
+  MapPin,
+  ArrowRight,
+  ShieldCheck
 } from 'lucide-react';
 
 export const DonateFoodPage = () => {
   const { user } = useAuth();
   const { addDonation } = useDonations();
   const navigate = useNavigate();
+
+  // Validate that the authenticated restaurant has configured address and coordinates in their profile
+  const hasConfiguredLocation = Boolean(
+    user?.address &&
+    user.address.trim() &&
+    user?.location?.coordinates &&
+    Array.isArray(user.location.coordinates) &&
+    user.location.coordinates.length === 2 &&
+    typeof user.location.coordinates[0] === 'number' &&
+    typeof user.location.coordinates[1] === 'number' &&
+    !isNaN(user.location.coordinates[0]) &&
+    !isNaN(user.location.coordinates[1])
+  );
+
+  const restaurantAddress = user?.address || '';
+  const restaurantCoords = hasConfiguredLocation
+    ? {
+        lat: Number(user.location.coordinates[1]),
+        lon: Number(user.location.coordinates[0])
+      }
+    : null;
 
   const [formData, setFormData] = useState({
     foodName: '',
@@ -22,7 +49,6 @@ export const DonateFoodPage = () => {
     description: '',
     preparedAt: new Date().toISOString().slice(0, 16),
     expiresAt: new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 16),
-    pickupAddress: user?.address || '42 Senapati Bapat Marg, Lower Parel, Mumbai',
     pickupInstructions: 'Report to kitchen dispatch dock Gate 2.',
     freshnessDeclaration: false
   });
@@ -38,9 +64,17 @@ export const DonateFoodPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Block submission if restaurant pickup location is missing
+    if (!hasConfiguredLocation) {
+      setError(
+        'Your restaurant pickup location is not configured. Please add your restaurant address in your Profile before publishing a donation.'
+      );
+      return;
+    }
 
     if (!formData.foodName.trim()) {
       setError('Food name is required.');
@@ -63,17 +97,40 @@ export const DonateFoodPage = () => {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      addDonation(
-        {
-          ...formData,
-          quantity: Number(formData.quantity)
-        },
-        user
-      );
-      setIsSubmitting(false);
-      navigate('/restaurant/donations');
-    }, 400);
+
+    // Create an immutable snapshot of the restaurant's address and GeoJSON coordinates
+    const donationPayload = {
+      foodName: formData.foodName.trim(),
+      category: formData.category,
+      dietary: formData.dietary,
+      quantity: Number(formData.quantity),
+      unit: formData.unit,
+      description: formData.description,
+      preparedAt: formData.preparedAt,
+      expiresAt: formData.expiresAt,
+      // Immutable location snapshot strictly adhering to GeoJSON RFC 7946 [longitude, latitude]
+      pickupAddress: restaurantAddress,
+      pickupLocation: {
+        type: 'Point',
+        coordinates: [Number(restaurantCoords.lon), Number(restaurantCoords.lat)]
+      },
+      pickupInstructions: formData.pickupInstructions,
+      freshnessDeclaration: formData.freshnessDeclaration,
+      restaurantId: user?.id || 'user-rest-101',
+      restaurantName: user?.organizationName || 'The Royal Kitchen & Caterers'
+    };
+
+    try {
+      // Save donation with location snapshot to backend / MongoDB
+      await publishDonation(donationPayload);
+    } catch (apiErr) {
+      console.warn('Backend donation notice (persisting locally):', apiErr.message);
+    }
+
+    // Persist in local donation context & notifications
+    addDonation(donationPayload, user);
+    setIsSubmitting(false);
+    navigate('/restaurant/donations');
   };
 
   return (
@@ -97,6 +154,33 @@ export const DonateFoodPage = () => {
 
       {/* Form Container */}
       <div className="bg-white border border-[#e3e8ee] rounded-xl p-6 sm:p-8 shadow-stripe-1">
+        {/* Missing Location Warning Banner */}
+        {!hasConfiguredLocation && (
+          <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2.5">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-amber-900">
+                  Pickup Location Not Configured
+                </p>
+                <p className="text-amber-800 leading-relaxed mt-0.5">
+                  Your restaurant pickup location is not configured. Please add your restaurant address in your Profile before publishing a donation.
+                </p>
+              </div>
+            </div>
+            <div className="pl-7.5">
+              <Link
+                to="/restaurant/profile"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#533afd] hover:bg-[#432ee0] text-white text-xs font-medium rounded-md shadow-xs transition-colors"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Configure Pickup Address in Profile</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="mb-6 p-3.5 rounded-md bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
@@ -120,16 +204,16 @@ export const DonateFoodPage = () => {
                   type="text"
                   name="foodName"
                   required
+                  placeholder="e.g. Vegetable Biryani & Raita"
                   value={formData.foodName}
                   onChange={handleChange}
-                  placeholder="e.g. Paneer Butter Masala & Steamed Rice"
                   className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-[#0d253d] mb-1">
-                  Category *
+                  Food Category *
                 </label>
                 <select
                   name="category"
@@ -137,11 +221,11 @@ export const DonateFoodPage = () => {
                   onChange={handleChange}
                   className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
                 >
-                  <option value="Cooked Meals">Cooked Meals (Hot)</option>
+                  <option value="Cooked Meals">Cooked Meals</option>
                   <option value="Bakery">Bakery & Breads</option>
-                  <option value="Raw Produce">Fresh Produce / Vegetables</option>
-                  <option value="Packaged">Packaged / Dry Rations</option>
-                  <option value="Groceries">Pantry & Groceries</option>
+                  <option value="Raw Produce">Raw Produce</option>
+                  <option value="Packaged Foods">Packaged Foods</option>
+                  <option value="Dairy">Dairy</option>
                 </select>
               </div>
             </div>
@@ -157,24 +241,27 @@ export const DonateFoodPage = () => {
                   onChange={handleChange}
                   className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
                 >
-                  <option value="Vegetarian">Pure Vegetarian</option>
-                  <option value="Non-Vegetarian">Non-Vegetarian</option>
+                  <option value="Vegetarian">Vegetarian</option>
                   <option value="Vegan">Vegan</option>
+                  <option value="Non-Vegetarian">Non-Vegetarian</option>
+                  <option value="Contains Egg">Contains Egg</option>
+                  <option value="Jain">Jain Friendly</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-[#0d253d] mb-1">
-                  Quantity Available *
+                  Estimated Quantity *
                 </label>
                 <input
                   type="number"
-                  name="quantity"
-                  required
                   min="1"
+                  step="1"
+                  required
+                  name="quantity"
+                  placeholder="e.g. 50"
                   value={formData.quantity}
                   onChange={handleChange}
-                  placeholder="e.g. 50"
                   className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all tnum"
                 />
               </div>
@@ -251,38 +338,100 @@ export const DonateFoodPage = () => {
 
           {/* Section 3: Pickup Details */}
           <div>
-            <h3 className="text-sm font-semibold text-[#0d253d] uppercase tracking-wider mb-4 pb-2 border-b border-[#e3e8ee]">
-              3. Pickup Instructions
-            </h3>
-
-            <div>
-              <label className="block text-xs font-medium text-[#0d253d] mb-1">
-                Pickup Address *
-              </label>
-              <input
-                type="text"
-                name="pickupAddress"
-                required
-                value={formData.pickupAddress}
-                onChange={handleChange}
-                placeholder="Full address where the NGO vehicle should report"
-                className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
-              />
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#e3e8ee]">
+              <h3 className="text-sm font-semibold text-[#0d253d] uppercase tracking-wider">
+                3. Pickup Instructions
+              </h3>
+              {hasConfiguredLocation && (
+                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  <span>Profile Location Verified</span>
+                </span>
+              )}
             </div>
 
-            <div className="mt-4">
-              <label className="block text-xs font-medium text-[#0d253d] mb-1">
-                Special Instructions for Pickup Staff
-              </label>
-              <input
-                type="text"
-                name="pickupInstructions"
-                value={formData.pickupInstructions}
-                onChange={handleChange}
-                placeholder="e.g. Enter through Gate 2, ask for Duty Chef Manoj"
-                className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
-              />
-            </div>
+            {hasConfiguredLocation ? (
+              <div className="space-y-4">
+                {/* Read-Only Pickup Address */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-medium text-[#0d253d]">
+                      Registered Pickup Address (Read-only) *
+                    </label>
+                    <Link
+                      to="/restaurant/profile"
+                      className="text-[11px] text-[#533afd] hover:underline font-medium inline-flex items-center gap-1"
+                    >
+                      <span>Update in Profile</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                  <input
+                    type="text"
+                    readOnly
+                    value={restaurantAddress}
+                    className="w-full bg-[#f6f9fc] text-[#0d253d] border border-[#d0d7de] rounded-md px-3 py-2 text-sm cursor-not-allowed select-text font-normal shadow-xs"
+                  />
+                  <p className="text-[11px] text-[#64748d] mt-1 font-light">
+                    Populated automatically from your Restaurant Profile. Pickup vehicles and shelters will be guided directly to this verified location.
+                  </p>
+                </div>
+
+                {/* Read-Only Location Map with Fixed Marker */}
+                <div>
+                  <label className="block text-xs font-medium text-[#0d253d] mb-1.5">
+                    Verified Pickup Point on Map
+                  </label>
+                  <LocationPickerMap
+                    latitude={restaurantCoords.lat}
+                    longitude={restaurantCoords.lon}
+                    address={restaurantAddress}
+                    isEditable={false}
+                    height="270px"
+                  />
+                </div>
+
+                {/* Pickup Instructions */}
+                <div>
+                  <label className="block text-xs font-medium text-[#0d253d] mb-1">
+                    Special Instructions for Pickup Staff / Drivers
+                  </label>
+                  <input
+                    type="text"
+                    name="pickupInstructions"
+                    value={formData.pickupInstructions}
+                    onChange={handleChange}
+                    placeholder="e.g. Enter through Gate 2, ask for Duty Chef Manoj at kitchen dock"
+                    className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
+                  />
+                </div>
+              </div>
+            ) : (
+              /* Missing Location Prompt - No Dummy Map */
+              <div className="p-6 rounded-xl bg-amber-50/80 border border-amber-200 text-xs space-y-3">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-900">
+                      Pickup Location Not Configured
+                    </h4>
+                    <p className="text-xs text-amber-800 leading-relaxed font-normal">
+                      Your restaurant pickup location is not configured. Please add your restaurant address in your Profile before publishing a donation.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-1 pl-8">
+                  <Link
+                    to="/restaurant/profile"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#533afd] hover:bg-[#432ee0] text-white text-xs font-medium rounded-md shadow-xs transition-colors"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>Go to Profile to Set Address & Map</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Food Freshness Checkbox */}
@@ -311,7 +460,7 @@ export const DonateFoodPage = () => {
               type="submit"
               variant="primary"
               size="md"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !hasConfiguredLocation}
               spark
             >
               {isSubmitting ? 'Publishing...' : 'Publish Surplus Donation'}

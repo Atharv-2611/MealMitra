@@ -20,11 +20,12 @@ export const ShelterDashboard = () => {
   const { donations } = useDonations();
 
   const availableDonations = donations.filter((d) => d.status === 'available');
+  const shelterId = user?.id || 'user-shel-202';
   const myClaims = donations.filter(
-    (d) => d.claimedBy?.shelterId === user?.id || (user?.role === 'shelter' && d.status === 'claimed')
+    (d) => d.claimedBy?.shelterId === shelterId || (user?.role === 'shelter' && d.status === 'claimed')
   );
   const myCompletedPickups = donations.filter(
-    (d) => d.status === 'picked_up'
+    (d) => (d.claimedBy?.shelterId === shelterId || user?.role === 'shelter') && d.status === 'picked_up'
   );
 
   const totalMealsClaimed = myCompletedPickups.reduce(

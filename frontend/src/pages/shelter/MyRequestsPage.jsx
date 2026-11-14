@@ -21,11 +21,14 @@ export const MyRequestsPage = () => {
   const [cancelModalItem, setCancelModalItem] = useState(null);
 
   // Filter requests claimed by this shelter
-  const myRequests = donations.filter(
-    (d) =>
-      d.claimedBy?.shelterId === user?.id ||
-      (user?.role === 'shelter' && (d.status === 'claimed' || d.status === 'picked_up'))
-  );
+  const myRequests = donations.filter((d) => {
+    const shelterId = user?.id || 'user-shel-202';
+    const isThisShelter = d.claimedBy?.shelterId === shelterId;
+    const isShelterRole =
+      (user?.role === 'shelter' || !user?.role) &&
+      (d.claimedBy?.shelterId === shelterId || ['claimed', 'picked_up', 'cancelled'].includes(d.status));
+    return isThisShelter || isShelterRole;
+  });
 
   const filteredRequests = myRequests.filter((item) => {
     if (statusFilter === 'all') return true;
@@ -225,12 +228,23 @@ export const MyRequestsPage = () => {
               </p>
             </div>
 
+            {selectedRequest.cancellationReason && (
+              <div>
+                <span className="text-xs font-medium text-rose-700 block mb-1">
+                  Cancellation / Release Reason
+                </span>
+                <p className="p-3 rounded-lg bg-rose-50 text-xs text-rose-800 leading-relaxed border border-rose-200">
+                  {selectedRequest.cancellationReason}
+                </p>
+              </div>
+            )}
+
             {selectedRequest.claimedBy?.notes && (
               <div>
                 <span className="text-xs font-medium text-[#0d253d] block mb-1">
-                  Your Claim Notes
+                  Logistics & Handover Notes
                 </span>
-                <p className="text-xs text-[#64748d]">
+                <p className="p-3 rounded-lg bg-[#f6f9fc] text-xs text-[#273951] leading-relaxed border border-[#e3e8ee]">
                   {selectedRequest.claimedBy.notes}
                 </p>
               </div>

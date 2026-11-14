@@ -5,13 +5,15 @@ import { useDonations } from '../../context/DonationContext';
 import { Button } from '../../components/common/Button';
 import { Badge, CategoryBadge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
+import { LocationPickerMap } from '../../components/common/LocationPickerMap';
 import SpotlightCard from '../../components/reactbits/SpotlightCard';
 import {
   Search,
   MapPin,
   UtensilsCrossed,
   ShieldCheck,
-  Building2
+  Building2,
+  ExternalLink
 } from 'lucide-react';
 
 export const BrowseFoodPage = () => {
@@ -114,11 +116,10 @@ export const BrowseFoodPage = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
-                selectedCategory === cat
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${selectedCategory === cat
                   ? 'bg-[#533afd] text-white shadow-xs'
                   : 'bg-[#f6f9fc] text-[#64748d] hover:text-[#0d253d] hover:bg-[#eef0ff]'
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -231,6 +232,78 @@ export const BrowseFoodPage = () => {
               <p className="text-xs text-rose-600 font-medium tnum">
                 Must be picked up before: {new Date(claimModalDonation.expiresAt).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
               </p>
+            </div>
+
+            {/* Restaurant Pickup Location Map */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#0d253d]">
+                  Restaurant Pickup Location
+                </label>
+                {(() => {
+                  const coords = claimModalDonation.pickupLocation?.coordinates;
+                  const hasValid = Boolean(
+                    coords &&
+                    Array.isArray(coords) &&
+                    coords.length === 2 &&
+                    typeof coords[0] === 'number' &&
+                    typeof coords[1] === 'number' &&
+                    !isNaN(coords[0]) &&
+                    !isNaN(coords[1])
+                  );
+                  if (!hasValid) return null;
+                  const lon = Number(coords[0]);
+                  const lat = Number(coords[1]);
+                  return (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-[#533afd] hover:underline font-medium inline-flex items-center gap-1"
+                    >
+                      <span>Open in Google Maps</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  );
+                })()}
+              </div>
+
+              {(() => {
+                const coords = claimModalDonation.pickupLocation?.coordinates;
+                const hasValid = Boolean(
+                  coords &&
+                  Array.isArray(coords) &&
+                  coords.length === 2 &&
+                  typeof coords[0] === 'number' &&
+                  typeof coords[1] === 'number' &&
+                  !isNaN(coords[0]) &&
+                  !isNaN(coords[1])
+                );
+                if (hasValid) {
+                  const lon = Number(coords[0]); // GeoJSON [longitude, latitude]
+                  const lat = Number(coords[1]);
+                  return (
+                    <div className="rounded-xl overflow-hidden border border-[#e3e8ee] shadow-stripe-1">
+                      <LocationPickerMap
+                        key={`claim-map-${claimModalDonation.id}`}
+                        latitude={lat}
+                        longitude={lon}
+                        address={`${claimModalDonation.restaurantName} - ${claimModalDonation.pickupAddress}`}
+                        isEditable={false}
+                        height="200px"
+                      />
+                    </div>
+                  );
+                }
+                return (
+                  <div className="p-3 bg-[#f6f9fc] border border-[#e3e8ee] rounded-xl text-xs text-[#64748d] flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-[#a8c3de] shrink-0" />
+                    <span>
+                      Map coordinates unavailable for this listing. Please follow the textual address: <strong>{claimModalDonation.pickupAddress}</strong>
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
 
             <div>

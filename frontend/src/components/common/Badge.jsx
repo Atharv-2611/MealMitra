@@ -32,7 +32,10 @@ export const CategoryBadge = ({ category, className = '' }) => {
       case 'raw produce':
         return 'bg-emerald-50 text-emerald-800 border-emerald-200';
       case 'packaged':
+      case 'packaged foods':
         return 'bg-blue-50 text-blue-800 border-blue-200';
+      case 'dairy':
+        return 'bg-indigo-50 text-indigo-800 border-indigo-200';
       default:
         return 'bg-slate-50 text-slate-700 border-slate-200';
     }

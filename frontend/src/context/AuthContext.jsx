@@ -11,6 +11,10 @@ const DEMO_USERS = {
     organizationName: 'The Royal Kitchen & Caterers',
     phone: '+91 98201 44521',
     address: '42 Senapati Bapat Marg, Lower Parel, Mumbai, Maharashtra 400013',
+    location: {
+      type: 'Point',
+      coordinates: [72.8295, 18.9986] // [longitude, latitude]
+    },
     fssaiLicense: '11521018000452',
     openingHours: '10:00 AM - 11:30 PM',
     createdAt: '2026-01-15'
@@ -23,9 +27,18 @@ const DEMO_USERS = {
     organizationName: 'Anandam Food Relief Shelter',
     phone: '+91 99302 77810',
     address: 'Plot 18, Near King Circle Railway Station, Matunga, Mumbai 400019',
+    location: {
+      type: 'Point',
+      coordinates: [72.8561, 19.0269]
+    },
     ngoRegistration: 'NGO-MH-2022-0941',
     beneficiaryCount: '150-200 daily meals',
     vehicleAvailable: true,
+    operatingHours: '08:00 AM - 10:00 PM',
+    darpanId: 'MH/2022/0319482',
+    fssaiRegistration: '21522023000812',
+    storageFacilities: 'Commercial Cold Room (4°C) & Insulated Hot Cambros',
+    serviceRadius: '12 km coverage across Central & South Mumbai',
     createdAt: '2026-02-01'
   }
 };
@@ -34,7 +47,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('mealmitra_user');
-      return saved ? JSON.parse(saved) : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.role === 'restaurant' && parsed.id === DEMO_USERS.restaurant.id && !parsed.location) {
+          parsed.location = DEMO_USERS.restaurant.location;
+        }
+        if (parsed.role === 'shelter' && parsed.id === DEMO_USERS.shelter.id && !parsed.location) {
+          parsed.location = DEMO_USERS.shelter.location;
+        }
+        return parsed;
+      }
+      return null;
     } catch {
       return null;
     }

@@ -17,7 +17,9 @@ import {
   CheckCircle2,
   Sparkles,
   TrendingUp,
-  Truck
+  Truck,
+  Leaf,
+  Building2
 } from 'lucide-react';
 
 export const HomePage = () => {
@@ -31,66 +33,196 @@ export const HomePage = () => {
       {/* ========================================================================= */}
       <section className="relative overflow-hidden hero-mesh-bg border-b border-[#e3e8ee] min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-4xl">
-            {/* Pill Eyebrow with ShinyText */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#eef0ff] border border-[#b9b9f9]/50 text-[#4434d4] text-[11px] font-medium tracking-wide uppercase mb-5 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-[#533afd] animate-pulse"></span>
-              <ShinyText
-                text="Zero Food Waste • Verified Hunger Relief"
-                color="#4434d4"
-                shineColor="#ffffff"
-                speed={3}
-                className="font-medium tracking-wider"
-              />
-            </div>
-
-            {/* Display XXL Headline with React Bits BlurText */}
-            <div className="mb-5">
-              <BlurText
-                text="Turn commercial surplus into immediate nourishment."
-                delay={40}
-                animateBy="words"
-                direction="top"
-                className="text-4xl sm:text-5xl lg:text-[56px] font-light text-[#0d253d] tracking-[-0.035em] leading-[1.05]"
-              />
-            </div>
-
-            {/* Body lead */}
-            <p className="text-base sm:text-lg text-[#273951] font-light leading-relaxed mb-8 max-w-2xl">
-              MealMitra connects commercial kitchens, caterers, and restaurants with certified shelters and NGOs in real-time. Safe, compliant, and dignified food redistribution in minutes.
-            </p>
-
-            {/* Primary & Secondary Pill CTAs with React Bits Magnet */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8">
-              <Magnet padding={40} magnetStrength={3}>
-                <Link to="/register">
-                  <Button variant="primary" size="lg" icon={ArrowRight} spark>
-                    Join the Network
-                  </Button>
-                </Link>
-              </Magnet>
-              <Magnet padding={40} magnetStrength={3}>
-                <Link to="/login">
-                  <Button variant="secondary" size="lg">
-                    Explore Live Food Feed
-                  </Button>
-                </Link>
-              </Magnet>
-            </div>
-
-            {/* Key Trust Indicators */}
-            <div className="pt-4 border-t border-[#e3e8ee]/80 flex flex-wrap items-center gap-6 sm:gap-8 text-xs text-[#64748d]">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>100% FSSAI Safety Verified</span>
+          {/* Hero 2-Column Grid: Left Content + Right Live Donation Activity Card */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Column: Headline, Lead, CTAs, Key Trust Indicators */}
+            <div className="lg:col-span-7">
+              {/* Pill Eyebrow with ShinyText */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#eef0ff] border border-[#b9b9f9]/50 text-[#4434d4] text-[11px] font-medium tracking-wide uppercase mb-5 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-[#533afd] animate-pulse"></span>
+                <ShinyText
+                  text="Zero Food Waste • Verified Hunger Relief"
+                  color="#4434d4"
+                  shineColor="#ffffff"
+                  speed={3}
+                  className="font-medium tracking-wider"
+                />
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#533afd]" />
-                <span>Average 42-min pickup time</span>
+
+              {/* Display XXL Headline with React Bits BlurText */}
+              <div className="mb-5">
+                <BlurText
+                  text="Turn commercial surplus into immediate nourishment."
+                  delay={40}
+                  animateBy="words"
+                  direction="top"
+                  className="text-4xl sm:text-5xl lg:text-[46px] xl:text-[54px] font-light text-[#0d253d] tracking-[-0.035em] leading-[1.08]"
+                />
               </div>
-              <div className="flex items-center gap-2">
-                <HeartHandshake className="w-4 h-4 text-[#ea2261]" />
-                <span>Completely Free for Nonprofits</span>
+
+              {/* Body lead */}
+              <p className="text-base sm:text-lg text-[#273951] font-light leading-relaxed mb-8 max-w-2xl">
+                MealMitra connects commercial kitchens, caterers, and restaurants with certified shelters and NGOs in real-time. Safe, compliant, and dignified food redistribution in minutes.
+              </p>
+
+              {/* Primary & Secondary Pill CTAs with React Bits Magnet */}
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8">
+                <Magnet padding={40} magnetStrength={3}>
+                  <Link to="/register">
+                    <Button variant="primary" size="lg" icon={ArrowRight} spark>
+                      Join the Network
+                    </Button>
+                  </Link>
+                </Magnet>
+                <Magnet padding={40} magnetStrength={3}>
+                  <Link to="/login">
+                    <Button variant="secondary" size="lg">
+                      Explore Live Food Feed
+                    </Button>
+                  </Link>
+                </Magnet>
+              </div>
+
+              {/* Key Trust Indicators */}
+              <div className="pt-4 border-t border-[#e3e8ee]/80 flex flex-wrap items-center gap-5 sm:gap-8 text-xs text-[#64748d]">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>100% FSSAI Safety Verified</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[#533afd]" />
+                  <span>Average 42-min pickup time</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <HeartHandshake className="w-4 h-4 text-[#ea2261]" />
+                  <span>Completely Free for Nonprofits</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Live Donation Activity Card with Floating UI Elements (Desktop Only) */}
+            <div className="hidden lg:flex lg:col-span-5 justify-center lg:justify-end">
+              <div className="relative w-full max-w-[420px] animate-float-gentle">
+                {/* Floating UI Element 1: Top Notification Card */}
+                <div className="absolute -top-3.5 -left-2 sm:-left-4 z-20 animate-float-subtle-1">
+                  <div className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#e3e8ee] shadow-stripe-2 text-xs font-medium text-[#0d253d]">
+                    <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-600 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    </div>
+                    <span>Food rescued successfully</span>
+                  </div>
+                </div>
+
+                {/* Floating UI Element 2: Bottom Impact Indicator */}
+                <div className="absolute -bottom-3.5 -right-2 sm:-right-4 z-20 animate-float-subtle-2">
+                  <div className="inline-flex items-center gap-2.5 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-[#e3e8ee] shadow-stripe-2">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200/70 text-emerald-700 flex items-center justify-center font-semibold text-xs tnum">
+                      24
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-[#0d253d] tnum leading-tight">
+                        24 Meals Saved
+                      </p>
+                      <p className="text-[10px] text-emerald-700 font-medium">
+                        Surplus to Shelter
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Donation Activity Card */}
+                <div className="relative z-10 bg-gradient-to-br from-white via-[#fdfcff] to-[#f3f0ff] border border-[#e3e8ee] rounded-2xl p-5 sm:p-6 shadow-stripe-2 hover:border-[#b9b9f9] transition-all duration-300">
+                  {/* Status Indicator & Time */}
+                  <div className="flex items-center justify-between gap-2 pb-3.5 border-b border-[#e3e8ee]/80">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-xs font-medium shadow-2xs">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span>Available for Pickup</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-[#64748d] tnum">
+                      <Clock className="w-3.5 h-3.5 text-[#64748d]" />
+                      <span>Posted 8 minutes ago</span>
+                    </div>
+                  </div>
+
+                  {/* Restaurant & Food Header */}
+                  <div className="flex items-start gap-3.5 py-4">
+                    {/* Food Thumbnail */}
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 border border-[#e3e8ee] bg-[#f6f9fc] shadow-2xs">
+                      <img
+                        src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80"
+                        alt="Fresh Nourishing Meals"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    {/* Restaurant Details */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#533afd] uppercase tracking-wider mb-0.5">
+                        <Building2 className="w-3 h-3" />
+                        <span>Commercial Kitchen Partner</span>
+                      </div>
+                      <h3 className="text-base sm:text-lg font-medium text-[#0d253d] tracking-tight truncate">
+                        The Green Bowl Kitchen
+                      </h3>
+                      <div className="flex items-center gap-1.5 text-xs text-[#64748d] mt-0.5 font-light">
+                        <MapPin className="w-3.5 h-3.5 text-[#533afd] shrink-0" />
+                        <span>Pune, Maharashtra</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Donation Details: 24 Fresh Meals, Vegetarian, Prepared Today */}
+                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#e3e8ee]/80 text-center">
+                    <div className="bg-white/80 rounded-lg p-2 border border-[#e3e8ee]/70 shadow-2xs">
+                      <p className="text-[10px] uppercase tracking-wider text-[#64748d] font-semibold">Quantity</p>
+                      <p className="text-xs sm:text-[13px] font-semibold text-[#0d253d] tnum mt-0.5">24 Fresh Meals</p>
+                    </div>
+                    <div className="bg-white/80 rounded-lg p-2 border border-[#e3e8ee]/70 shadow-2xs">
+                      <p className="text-[10px] uppercase tracking-wider text-[#64748d] font-semibold">Dietary</p>
+                      <p className="text-xs sm:text-[13px] font-semibold text-emerald-700 mt-0.5 flex items-center justify-center gap-1">
+                        <Leaf className="w-3 h-3" /> Vegetarian
+                      </p>
+                    </div>
+                    <div className="bg-white/80 rounded-lg p-2 border border-[#e3e8ee]/70 shadow-2xs">
+                      <p className="text-[10px] uppercase tracking-wider text-[#64748d] font-semibold">Freshness</p>
+                      <p className="text-xs sm:text-[13px] font-semibold text-[#0d253d] mt-0.5">Prepared Today</p>
+                    </div>
+                  </div>
+
+                  {/* Pickup Information: Ready for NGO Collection */}
+                  <div className="pt-3.5 flex flex-col gap-2.5">
+                    <div className="flex items-center justify-between bg-white/90 border border-[#b9b9f9]/50 rounded-xl px-3.5 py-2.5 shadow-2xs">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-[#eef0ff] text-[#533afd] flex items-center justify-center shrink-0">
+                          <Truck className="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-[#0d253d] leading-tight">
+                            Ready for NGO Collection
+                          </p>
+                          <p className="text-[11px] text-[#64748d] font-light">
+                            Kitchen dispatch dock • Gate 1
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#eef0ff] text-[#533afd] px-2 py-0.5 rounded-full border border-[#b9b9f9]/40">
+                        Active
+                      </span>
+                    </div>
+
+                    {/* Operational Micro-note */}
+                    <div className="flex items-center justify-between text-xs text-[#64748d] pt-1 px-1">
+                      <span className="flex items-center gap-1.5 text-emerald-700 font-medium text-[11px]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        FSSAI Safety Certified
+                      </span>
+                      <span className="text-[11px] text-[#533afd] font-medium">
+                        Live Activity Simulation
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

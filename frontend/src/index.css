@@ -59,3 +59,51 @@
               radial-gradient(circle at 50% -10%, rgba(185, 185, 249, 0.22) 0%, transparent 60%),
               #ffffff;
 }
+
+/* Subtle floating animations for hero visual elements */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes float-subtle-1 {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes float-subtle-2 {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 6s ease-in-out infinite;
+}
+
+.animate-float-subtle-1 {
+  animation: float-subtle-1 5s ease-in-out infinite;
+}
+
+.animate-float-subtle-2 {
+  animation: float-subtle-2 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-gentle,
+  .animate-float-subtle-1,
+  .animate-float-subtle-2 {
+    animation: none !important;
+  }
+}
