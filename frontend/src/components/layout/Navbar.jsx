@@ -64,11 +64,10 @@ export const Navbar = () => {
               <>
                 <Link
                   to="/"
-                  className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    isActive('/')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#533afd] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${isActive('/')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#533afd] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   Home
                 </Link>
@@ -96,42 +95,38 @@ export const Navbar = () => {
               <>
                 <Link
                   to="/restaurant/dashboard"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
-                    isActive('/restaurant/dashboard')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${isActive('/restaurant/dashboard')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/restaurant/donate"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal flex items-center gap-1.5 transition-colors ${
-                    isActive('/restaurant/donate')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal flex items-center gap-1.5 transition-colors ${isActive('/restaurant/donate')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   <PlusCircle className="w-4 h-4 text-[#533afd]" />
                   <span>Donate Food</span>
                 </Link>
                 <Link
                   to="/restaurant/donations"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
-                    isActive('/restaurant/donations')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${isActive('/restaurant/donations')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   My Donations
                 </Link>
                 <Link
                   to="/restaurant/profile"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
-                    isActive('/restaurant/profile')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${isActive('/restaurant/profile')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   Profile
                 </Link>
@@ -141,42 +136,38 @@ export const Navbar = () => {
               <>
                 <Link
                   to="/shelter/dashboard"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
-                    isActive('/shelter/dashboard')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${isActive('/shelter/dashboard')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/shelter/browse"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal flex items-center gap-1.5 transition-colors ${
-                    isActive('/shelter/browse')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal flex items-center gap-1.5 transition-colors ${isActive('/shelter/browse')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   <Search className="w-4 h-4 text-[#533afd]" />
                   <span>Browse Food</span>
                 </Link>
                 <Link
                   to="/shelter/requests"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
-                    isActive('/shelter/requests')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${isActive('/shelter/requests')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   My Requests
                 </Link>
                 <Link
                   to="/shelter/profile"
-                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${
-                    isActive('/shelter/profile')
-                      ? 'text-[#533afd] bg-[#eef0ff]'
-                      : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-normal transition-colors ${isActive('/shelter/profile')
+                    ? 'text-[#533afd] bg-[#eef0ff]'
+                    : 'text-[#273951] hover:text-[#0d253d] hover:bg-[#f6f9fc]'
+                    }`}
                 >
                   NGO Profile
                 </Link>
@@ -204,9 +195,8 @@ export const Navbar = () => {
                 {/* Notifications link */}
                 <Link
                   to="/notifications"
-                  className={`relative p-2 rounded-full text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors ${
-                    isActive('/notifications') ? 'text-[#533afd] bg-[#eef0ff]' : ''
-                  }`}
+                  className={`relative p-2 rounded-full text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors ${isActive('/notifications') ? 'text-[#533afd] bg-[#eef0ff]' : ''
+                    }`}
                   title="Notifications"
                 >
                   <Bell className="w-4 h-4" />
@@ -218,9 +208,8 @@ export const Navbar = () => {
                 {/* Settings link */}
                 <Link
                   to="/settings"
-                  className={`p-2 rounded-full text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors ${
-                    isActive('/settings') ? 'text-[#533afd] bg-[#eef0ff]' : ''
-                  }`}
+                  className={`p-2 rounded-full text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] transition-colors ${isActive('/settings') ? 'text-[#533afd] bg-[#eef0ff]' : ''
+                    }`}
                   title="Settings"
                 >
                   <Settings className="w-4 h-4" />

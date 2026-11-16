@@ -8,7 +8,9 @@ import { Modal } from '../../components/common/Modal';
 import {
   UtensilsCrossed,
   PlusCircle,
-  Search
+  Search,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export const MyDonationsPage = () => {
@@ -20,21 +22,40 @@ export const MyDonationsPage = () => {
   const [selectedDonation, setSelectedDonation] = useState(null);
   const [cancelModalItem, setCancelModalItem] = useState(null);
   const [cancelReason, setCancelReason] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   // Filter donations belonging to this restaurant
   const myDonations = donations.filter(
     (d) => d.restaurantId === user?.id || user?.role === 'restaurant'
   );
 
+  const query = searchQuery.trim().toLowerCase();
   const filteredDonations = myDonations.filter((item) => {
     const matchesStatus =
       statusFilter === 'all' ? true : item.status === statusFilter;
     const matchesSearch =
-      item.foodName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase());
+      !query ||
+      (item.foodName || '').toLowerCase().includes(query) ||
+      (item.id || '').toLowerCase().includes(query) ||
+      (item.category || '').toLowerCase().includes(query);
     return matchesStatus && matchesSearch;
   });
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleStatusFilterChange = (st) => {
+    setStatusFilter(st);
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil(filteredDonations.length / ITEMS_PER_PAGE) || 1;
+  const safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const startIndex = (safeCurrentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedDonations = filteredDonations.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handleMarkPickedUp = (id) => {
     updateDonationStatus(id, 'picked_up');
@@ -79,7 +100,7 @@ export const MyDonationsPage = () => {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search by food name, ID or category..."
             className="w-full bg-white text-[#0d253d] border border-[#a8c3de] rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all"
           />
@@ -90,7 +111,8 @@ export const MyDonationsPage = () => {
           {['all', 'available', 'claimed', 'picked_up', 'cancelled'].map((st) => (
             <button
               key={st}
-              onClick={() => setStatusFilter(st)}
+              type="button"
+              onClick={() => handleStatusFilterChange(st)}
               className={`px-3 py-1.5 text-xs font-medium rounded-full capitalize transition-all cursor-pointer whitespace-nowrap ${
                 statusFilter === st
                   ? 'bg-white text-[#533afd] shadow-xs'
@@ -131,7 +153,7 @@ export const MyDonationsPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#e3e8ee] text-xs sm:text-sm font-light text-[#273951]">
-                {filteredDonations.map((item) => (
+                {paginatedDonations.map((item) => (
                   <tr key={item.id} className="hover:bg-[#f6f9fc]/60 transition-colors">
                     <td className="py-4 px-4 md:px-6">
                       <p className="font-normal text-[#0d253d]">{item.foodName}</p>
@@ -144,18 +166,24 @@ export const MyDonationsPage = () => {
                       {item.quantity} {item.unit}
                     </td>
                     <td className="py-4 px-4">
-                      <p className="text-rose-600 font-normal tnum">
-                        {new Date(item.expiresAt).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
-                      <p className="text-[11px] text-[#64748d] tnum">
-                        {new Date(item.expiresAt).toLocaleDateString([], {
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </p>
+                      {item.expiresAt ? (
+                        <>
+                          <p className="text-rose-600 font-normal tnum">
+                            {new Date(item.expiresAt).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                          <p className="text-[11px] text-[#64748d] tnum">
+                            {new Date(item.expiresAt).toLocaleDateString([], {
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </>
+                      ) : (
+                        <span className="text-[#64748d]">--</span>
+                      )}
                     </td>
                     <td className="py-4 px-4">
                       <Badge variant={item.status}>
@@ -204,6 +232,64 @@ export const MyDonationsPage = () => {
             </table>
           </div>
         )}
+
+        {/* Pagination Footer */}
+        {filteredDonations.length > 0 && (
+          <div className="px-4 md:px-6 py-3.5 border-t border-[#e3e8ee] bg-[#fdfdfe] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748d]">
+            <div className="tnum font-light text-xs">
+              Showing <span className="font-medium text-[#0d253d]">{startIndex + 1}</span> to{' '}
+              <span className="font-medium text-[#0d253d]">
+                {Math.min(startIndex + ITEMS_PER_PAGE, filteredDonations.length)}
+              </span>{' '}
+              of <span className="font-medium text-[#0d253d]">{filteredDonations.length}</span> donations
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={safeCurrentPage === 1}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[#e3e8ee] bg-white text-[#273951] hover:bg-[#f6f9fc] hover:text-[#0d253d] disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs font-medium cursor-pointer"
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span>Previous</span>
+                </button>
+
+                <div className="flex items-center gap-1 px-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-7 h-7 rounded-full text-xs font-medium transition-colors flex items-center justify-center tnum cursor-pointer ${
+                        safeCurrentPage === pageNum
+                          ? 'bg-[#533afd] text-white shadow-2xs'
+                          : 'text-[#273951] hover:bg-[#f6f9fc] hover:text-[#0d253d]'
+                      }`}
+                      aria-label={`Page ${pageNum}`}
+                      aria-current={safeCurrentPage === pageNum ? 'page' : undefined}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={safeCurrentPage === totalPages}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[#e3e8ee] bg-white text-[#273951] hover:bg-[#f6f9fc] hover:text-[#0d253d] disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-xs font-medium cursor-pointer"
+                  aria-label="Next page"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Details Modal */}
@@ -236,13 +322,13 @@ export const MyDonationsPage = () => {
               <div>
                 <span className="text-xs text-[#64748d] block">Preparation Time</span>
                 <span className="text-xs text-[#273951] tnum">
-                  {new Date(selectedDonation.preparedAt).toLocaleString()}
+                  {selectedDonation.preparedAt ? new Date(selectedDonation.preparedAt).toLocaleString() : 'N/A'}
                 </span>
               </div>
               <div>
                 <span className="text-xs text-[#64748d] block">Expiry Deadline</span>
                 <span className="text-xs text-rose-600 font-medium tnum">
-                  {new Date(selectedDonation.expiresAt).toLocaleString()}
+                  {selectedDonation.expiresAt ? new Date(selectedDonation.expiresAt).toLocaleString() : 'N/A'}
                 </span>
               </div>
             </div>
@@ -257,7 +343,7 @@ export const MyDonationsPage = () => {
             <div>
               <span className="text-xs text-[#64748d] block mb-1">Pickup Instructions</span>
               <p className="text-xs text-[#273951] leading-relaxed">
-                {selectedDonation.pickupInstructions}
+                {selectedDonation.pickupInstructions || 'Standard kitchen dispatch gate.'}
               </p>
             </div>
 
